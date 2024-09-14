@@ -14,6 +14,8 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	
+	"crypto/tls"
 )
 
 type statusChangeFunction func(status string, isListening bool)
@@ -313,7 +315,15 @@ func proxyHandler(response http.ResponseWriter, request *http.Request) {
 		_ = proxyRequest.Body.Close()
 	}
 
-	var client http.Client
+	// var client http.Client
+
+	var client = &http.Client{  
+		Transport: &http.Transport{  
+			TLSClientConfig: &tls.Config{  
+				InsecureSkipVerify: true,  
+			},  
+		},  
+	}
 	var proxyResponse *http.Response
 	proxyResponse, err := client.Do(&proxyRequest)
 
